@@ -1,0 +1,307 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{{ profile_user.username }} - Profile</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 700px;
+            max-width: 90%;
+            margin: 30px auto;
+        }
+
+        .profile {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .profile h1 {
+            margin-bottom: 10px;
+        }
+
+        .stats {
+            display: flex;
+            gap: 30px;
+            margin: 20px 0;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat strong {
+            display: block;
+            font-size: 22px;
+        }
+
+        .stat a {
+            color: #1877f2;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .stat a:hover {
+            text-decoration: underline;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 10px 15px;
+            background: #1877f2;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            margin-top: 10px;
+            border: none;
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+        .follow-button {
+            background: #1877f2;
+        }
+
+        .unfollow-button {
+            background: #555;
+        }
+
+        .post {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+
+        .post img {
+            max-width: 100%;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="profile">
+
+        <h1>👤 @{{ profile_user.username }}</h1>
+
+        <p>
+            <strong>Email:</strong>
+            {{ profile_user.email|default:"Not provided" }}
+        </p>
+
+        <p>
+            <strong>Bio:</strong>
+            {{ profile.bio|default:"No bio yet." }}
+        </p>
+
+
+        <!-- ========================= -->
+        <!-- FOLLOWERS / FOLLOWING / POSTS -->
+        <!-- ========================= -->
+
+        <div class="stats">
+
+            <!-- FOLLOWERS -->
+
+            <div class="stat">
+
+                <a href="{% url 'followers' profile_user.username %}">
+
+                    <strong>
+                        {{ followers_count }}
+                    </strong>
+
+                    Followers
+
+                </a>
+
+            </div>
+
+
+            <!-- FOLLOWING -->
+
+            <div class="stat">
+
+                <a href="{% url 'following' profile_user.username %}">
+
+                    <strong>
+                        {{ following_count }}
+                    </strong>
+
+                    Following
+
+                </a>
+
+            </div>
+
+
+            <!-- POSTS -->
+
+            <div class="stat">
+
+                <strong>
+                    {{ posts.count }}
+                </strong>
+
+                Posts
+
+            </div>
+
+        </div>
+
+
+        <!-- ========================= -->
+        <!-- FOLLOW / UNFOLLOW -->
+        <!-- ========================= -->
+
+        {% if request.user.is_authenticated and request.user != profile_user %}
+
+            <form
+                method="POST"
+                action="{% url 'follow_user' profile_user.username %}"
+            >
+
+                {% csrf_token %}
+
+                {% if is_following %}
+
+                    <button
+                        type="submit"
+                        class="button unfollow-button"
+                    >
+                        ✓ Unfollow
+                    </button>
+
+                {% else %}
+
+                    <button
+                        type="submit"
+                        class="button follow-button"
+                    >
+                        + Follow
+                    </button>
+
+                {% endif %}
+
+            </form>
+
+        {% endif %}
+
+
+        <!-- ========================= -->
+        <!-- OWN PROFILE -->
+        <!-- ========================= -->
+
+        {% if request.user == profile_user %}
+
+            <a
+                class="button"
+                href="{% url 'edit_profile' %}"
+            >
+                ✏️ Edit Profile
+            </a>
+
+            <p>
+                <strong>
+                    ✅ This is your profile.
+                </strong>
+            </p>
+
+        {% endif %}
+
+
+        <!-- ========================= -->
+        <!-- BACK TO HOME -->
+        <!-- ========================= -->
+
+        <a
+            class="button"
+            href="{% url 'home' %}"
+        >
+            ← Back to Home
+        </a>
+
+    </div>
+
+
+    <!-- ========================= -->
+    <!-- USER POSTS -->
+    <!-- ========================= -->
+
+    <h2>
+        📰 {{ profile_user.username }}'s Posts
+    </h2>
+
+
+    {% for post in posts %}
+
+        <div class="post">
+
+            <h3>
+                @{{ post.author.username }}
+            </h3>
+
+            <p>
+                {{ post.content }}
+            </p>
+
+
+            {% if post.image %}
+
+                <img
+                    src="{{ post.image.url }}"
+                    alt="Post image"
+                >
+
+            {% endif %}
+
+
+            <p>
+                🕒 {{ post.created_at }}
+            </p>
+
+            <p>
+                ❤️ Likes: {{ post.likes.count }}
+            </p>
+
+            <p>
+                💬 Comments: {{ post.comments.count }}
+            </p>
+
+        </div>
+
+
+    {% empty %}
+
+        <div class="post">
+
+            <p>
+                This user has not created any posts yet.
+            </p>
+
+        </div>
+
+    {% endfor %}
+
+</div>
+
+</body>
+</html>
+

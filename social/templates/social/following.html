@@ -1,0 +1,170 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ profile_user.username }} - Following</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f6fb;
+        }
+
+        .container {
+            width: 700px;
+            max-width: 90%;
+            margin: 50px auto;
+        }
+
+        .header {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            margin: 0 0 8px;
+        }
+
+        .back {
+            color: #1877f2;
+            text-decoration: none;
+        }
+
+        .user-card {
+            background: white;
+            padding: 18px;
+            margin-bottom: 12px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .avatar {
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            object-fit: cover;
+            background: #ddd;
+        }
+
+        .username {
+            font-size: 18px;
+            font-weight: bold;
+            color: #1877f2;
+            text-decoration: none;
+        }
+
+        .profile-btn {
+            padding: 9px 16px;
+            background: #1877f2;
+            color: white;
+            text-decoration: none;
+            border-radius: 7px;
+        }
+
+        .empty {
+            background: white;
+            padding: 50px;
+            text-align: center;
+            border-radius: 12px;
+            color: #777;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="header">
+
+        <h1>👥 Following</h1>
+
+        <p>
+            <strong>{{ profile_user.username }}</strong>
+            is following {{ users|length }} user{{ users|length|pluralize }}
+        </p>
+
+        <a
+            class="back"
+            href="{% url 'profile' profile_user.username %}"
+        >
+            ← Back to Profile
+        </a>
+
+    </div>
+
+
+    {% if users %}
+
+        {% for user in users %}
+
+            <div class="user-card">
+
+                <div class="user-info">
+
+                    {% if user.profile.profile_picture %}
+
+                        <img
+                            class="avatar"
+                            src="{{ user.profile.profile_picture.url }}"
+                            alt="{{ user.username }}"
+                        >
+
+                    {% else %}
+
+                        <div class="avatar"></div>
+
+                    {% endif %}
+
+                    <a
+                        class="username"
+                        href="{% url 'profile' user.username %}"
+                    >
+                        {{ user.username }}
+                    </a>
+
+                </div>
+
+
+                <a
+                    class="profile-btn"
+                    href="{% url 'profile' user.username %}"
+                >
+                    View Profile
+                </a>
+
+            </div>
+
+        {% endfor %}
+
+    {% else %}
+
+        <div class="empty">
+
+            <h2>Not Following Anyone</h2>
+
+            <p>
+                {{ profile_user.username }} isn't following anyone yet.
+            </p>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>SocialMedia</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 700px;
+            margin: 30px auto;
+        }
+
+        .header, .post {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .post img {
+            max-width: 100%;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 8px 12px;
+            background: #1877f2;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+
+        .like-button {
+            background: #e91e63;
+        }
+
+        .comment-box {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #ddd;
+        }
+
+        .comment-box input {
+            width: 70%;
+            padding: 10px;
+        }
+
+        .comment-box button {
+            padding: 10px;
+        }
+
+        .comment {
+            background: #f5f5f5;
+            padding: 8px;
+            margin-top: 8px;
+            border-radius: 5px;
+        }
+
+        .logout-button {
+            padding: 8px 12px;
+            background: #333;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="header">
+
+        <h1>🌐 SocialMedia</h1>
+
+        {% if user.is_authenticated %}
+
+            <h2>Welcome, {{ user.username }} 👋</h2>
+
+            <a class="button"
+               href="{% url 'profile' user.username %}">
+                👤 My Profile
+            </a>
+
+            <a class="button"
+               href="{% url 'create_post' %}">
+                ➕ Create New Post
+            </a>
+
+            <form method="POST"
+                  action="{% url 'logout' %}"
+                  style="display:inline;">
+                {% csrf_token %}
+                <button class="logout-button" type="submit">
+                    Logout
+                </button>
+            </form>
+
+        {% else %}
+
+            <a class="button" href="{% url 'login' %}">
+                Login
+            </a>
+
+            <a class="button" href="{% url 'register' %}">
+                Register
+            </a>
+
+        {% endif %}
+
+    </div>
+
+
+    <h2>📰 Latest Posts</h2>
+
+
+    {% for post in posts %}
+
+        <div class="post">
+
+            <h3>
+                <a href="{% url 'profile' post.author.username %}">
+                    @{{ post.author.username }}
+                </a>
+            </h3>
+
+            <p>{{ post.content }}</p>
+
+            {% if post.image %}
+                <img src="{{ post.image.url }}" alt="Post image">
+            {% endif %}
+
+            <p>
+                🕒 Posted: {{ post.created_at }}
+            </p>
+
+            {% if user.is_authenticated %}
+
+                <a class="button like-button"
+                   href="{% url 'like_post' post.id %}">
+                    ❤️ Like / Unlike
+                </a>
+
+            {% endif %}
+
+            <p>
+                ❤️ Likes: {{ post.likes.count }}
+            </p>
+
+
+            <!-- COMMENTS -->
+
+            <div class="comment-box">
+
+                <h3>💬 Comments</h3>
+
+                {% if user.is_authenticated %}
+
+                    <form method="POST"
+                          action="{% url 'add_comment' post.id %}">
+
+                        {% csrf_token %}
+
+                        <input
+                            type="text"
+                            name="content"
+                            placeholder="Write a comment..."
+                            required
+                        >
+
+                        <button type="submit">
+                            💬 Comment
+                        </button>
+
+                    </form>
+
+                {% endif %}
+
+
+                {% for comment in post.comments.all %}
+
+                    <div class="comment">
+
+                        <strong>
+                            @{{ comment.author.username }}
+                        </strong>
+
+                        {{ comment.content }}
+
+                    </div>
+
+                {% empty %}
+
+                    <p>No comments yet.</p>
+
+                {% endfor %}
+
+            </div>
+
+        </div>
+
+    {% empty %}
+
+        <div class="post">
+            <p>
+                No posts yet. Be the first to create a post!
+            </p>
+        </div>
+
+    {% endfor %}
+
+</div>
+
+</body>
+</html>
