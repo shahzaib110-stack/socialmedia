@@ -2,11 +2,20 @@ from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+
+# ============================================================
+# SECURITY
+# ============================================================
+
 SECRET_KEY = 'django-insecure-%#ro_v%nw&=y=(d)z2nrskcyben29swmdmtj=$z!c_n^a9)j%2'
 
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'socialmediapk.pythonanywhere.com',
+    'localhost',
+    '127.0.0.1',
+]
 
 
 # ============================================================
@@ -40,7 +49,13 @@ MIDDLEWARE = [
 ]
 
 
+# ============================================================
+# URL / WSGI
+# ============================================================
+
 ROOT_URLCONF = 'socialmedia.urls'
+
+WSGI_APPLICATION = 'socialmedia.wsgi.application'
 
 
 # ============================================================
@@ -64,9 +79,6 @@ TEMPLATES = [
         },
     },
 ]
-
-
-WSGI_APPLICATION = 'socialmedia.wsgi.application'
 
 
 # ============================================================
@@ -118,7 +130,19 @@ USE_TZ = True
 # STATIC FILES
 # ============================================================
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
+
+# Required for PythonAnywhere
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+
+# ============================================================
+# MEDIA FILES
+# ============================================================
+
+MEDIA_URL = '/media/'
+
+MEDIA_ROOT = BASE_DIR / 'media'
 
 
 # ============================================================
@@ -133,16 +157,14 @@ LOGOUT_REDIRECT_URL = '/'
 
 
 # ============================================================
-# MEDIA FILES
-# ============================================================
-
-MEDIA_URL = '/media/'
-
-MEDIA_ROOT = BASE_DIR / 'media'
-
-
-# ============================================================
 # EMAIL
 # ============================================================
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+
+# ============================================================
+# DEFAULT PRIMARY KEY
+# ============================================================
+
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
