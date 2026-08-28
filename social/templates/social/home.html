@@ -1,226 +1,1642 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>SocialMedia</title>
 
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #f5f5f5;
+
+        * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
         }
 
-        .container {
-            width: 700px;
-            margin: 30px auto;
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background:
+                radial-gradient(circle at 80% 20%, rgba(90, 40, 255, 0.12), transparent 30%),
+                radial-gradient(circle at 20% 90%, rgba(255, 0, 170, 0.08), transparent 30%),
+                #050816;
+            color: #f5f7ff;
+            min-height: 100vh;
         }
 
-        .header, .post {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
+
+        /* =========================================
+           NAVBAR
+        ========================================= */
+
+        .navbar {
+            height: 82px;
+            background: rgba(5, 8, 22, 0.92);
+            border-bottom: 1px solid rgba(120, 130, 255, 0.18);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 28px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            backdrop-filter: blur(20px);
+        }
+
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 27px;
+            font-weight: 800;
+            white-space: nowrap;
+        }
+
+        .logo-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 13px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            background: linear-gradient(
+                135deg,
+                #2563ff,
+                #7c3aed,
+                #ec4899
+            );
+
+            box-shadow:
+                0 0 25px rgba(124, 58, 237, 0.55);
+        }
+
+        .logo span {
+            background: linear-gradient(
+                90deg,
+                #4f8cff,
+                #a855f7,
+                #ec4899
+            );
+
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+
+        /* =========================================
+           SEARCH
+        ========================================= */
+
+        .search-box {
+            width: 440px;
+        }
+
+        .search-box form {
+            width: 100%;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 14px 20px;
+            border-radius: 30px;
+
+            border: 1px solid rgba(120, 130, 255, 0.25);
+
+            outline: none;
+
+            color: white;
+
+            background:
+                rgba(20, 28, 55, 0.85);
+
+            font-size: 15px;
+
+            box-shadow:
+                inset 0 0 20px rgba(70, 80, 160, 0.08);
+        }
+
+        .search-box input::placeholder {
+            color: #8d98ba;
+        }
+
+        .search-box input:focus {
+            border-color: #7657ff;
+
+            box-shadow:
+                0 0 20px rgba(118, 87, 255, 0.20);
+        }
+
+
+        /* =========================================
+           NAV BUTTONS
+        ========================================= */
+
+        .nav-buttons {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+        }
+
+        .nav-btn {
+            text-decoration: none;
+            color: #d7dcf0;
+            padding: 12px 15px;
+            border-radius: 12px;
+            font-size: 15px;
+            transition: 0.25s;
+        }
+
+        .nav-btn:hover {
+            background: rgba(80, 90, 200, 0.15);
+            color: white;
+        }
+
+        .nav-btn.active {
+            background: rgba(54, 78, 180, 0.20);
+            color: #63a4ff;
+        }
+
+        .profile-nav {
+            font-weight: bold;
+        }
+
+        .logout-btn {
+            border: 1px solid rgba(130, 140, 255, 0.25);
+            background: rgba(25, 32, 60, 0.9);
+            color: white;
+            padding: 11px 18px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: 0.25s;
+        }
+
+        .logout-btn:hover {
+            background: linear-gradient(
+                135deg,
+                #4f46e5,
+                #9333ea
+            );
+
+            border-color: transparent;
+
+            box-shadow:
+                0 0 20px rgba(124, 58, 237, 0.35);
+        }
+
+
+        /* =========================================
+           MAIN LAYOUT
+           RIGHT SIDEBAR REMOVED
+        ========================================= */
+
+        .main-container {
+            max-width: 1250px;
+            margin: 30px auto;
+            display: grid;
+            grid-template-columns: 300px minmax(0, 1fr);
+            gap: 26px;
+            padding: 0 20px;
+        }
+
+
+        /* =========================================
+           LEFT SIDEBAR
+        ========================================= */
+
+        .sidebar {
+            position: sticky;
+            top: 105px;
+            height: fit-content;
+        }
+
+        .glass-card {
+            background:
+                linear-gradient(
+                    145deg,
+                    rgba(17, 26, 55, 0.88),
+                    rgba(8, 13, 32, 0.92)
+                );
+
+            border: 1px solid rgba(110, 125, 255, 0.20);
+
+            border-radius: 22px;
+
+            box-shadow:
+                0 15px 50px rgba(0, 0, 0, 0.30),
+                inset 0 1px rgba(255,255,255,0.03);
+
+            backdrop-filter: blur(18px);
+        }
+
+
+        /* =========================================
+           PROFILE CARD
+        ========================================= */
+
+        .profile-card {
+            padding: 25px 20px;
+            text-align: center;
             margin-bottom: 20px;
         }
 
-        .post img {
-            max-width: 100%;
-            border-radius: 8px;
-            margin-top: 10px;
-        }
+        .profile-avatar {
+            width: 110px;
+            height: 110px;
 
-        .button {
-            display: inline-block;
-            padding: 8px 12px;
-            background: #1877f2;
+            border-radius: 50%;
+
+            margin: auto auto 15px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            font-size: 42px;
+            font-weight: bold;
+
             color: white;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #2563ff,
+                    #7c3aed,
+                    #ec4899
+                );
+
+            border: 3px solid rgba(255,255,255,0.15);
+
+            box-shadow:
+                0 0 30px rgba(124, 58, 237, 0.55);
+        }
+
+        .profile-card h2 {
+            font-size: 20px;
+            margin-bottom: 7px;
+        }
+
+        .profile-card p {
+            color: #8f9aba;
+            font-size: 14px;
+        }
+
+
+        /* =========================================
+           CREATE POST BUTTON
+        ========================================= */
+
+        .create-btn {
+            display: block;
             text-decoration: none;
-            border-radius: 5px;
-            margin-top: 10px;
+            color: white;
+
+            margin-top: 20px;
+
+            padding: 14px;
+
+            border-radius: 13px;
+
+            text-align: center;
+
+            font-weight: bold;
+            font-size: 15px;
+
+            background:
+                linear-gradient(
+                    90deg,
+                    #2563ff,
+                    #7c3aed,
+                    #ec4899
+                );
+
+            box-shadow:
+                0 8px 25px rgba(124, 58, 237, 0.30);
+
+            transition: 0.25s;
         }
 
-        .like-button {
-            background: #e91e63;
+        .create-btn:hover {
+            transform: translateY(-2px);
+
+            box-shadow:
+                0 12px 35px rgba(236, 72, 153, 0.35);
         }
 
-        .comment-box {
-            margin-top: 15px;
+
+        /* =========================================
+           SIDEBAR MENU
+        ========================================= */
+
+        .menu-card {
+            padding: 12px;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+        }
+
+        .sidebar-menu li {
+            margin: 4px 0;
+        }
+
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+
+            gap: 12px;
+
+            padding: 14px 15px;
+
+            text-decoration: none;
+
+            color: #b9c1dc;
+
+            border-radius: 13px;
+
+            font-size: 15px;
+
+            transition: 0.25s;
+        }
+
+        .sidebar-menu a:hover {
+            color: white;
+
+            background:
+                linear-gradient(
+                    90deg,
+                    rgba(60, 80, 180, 0.25),
+                    rgba(124, 58, 237, 0.12)
+                );
+        }
+
+        .sidebar-menu a.active {
+            color: white;
+
+            background:
+                linear-gradient(
+                    90deg,
+                    rgba(65, 92, 220, 0.35),
+                    rgba(124, 58, 237, 0.18)
+                );
+
+            border-left: 3px solid #8b5cf6;
+        }
+
+
+        /* =========================================
+           FEED
+        ========================================= */
+
+        .feed-title {
+            font-size: 29px;
+            margin: 0 0 20px 2px;
+
+            background:
+                linear-gradient(
+                    90deg,
+                    #ffffff,
+                    #b8c7ff
+                );
+
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+
+        /* =========================================
+           COMPOSER
+        ========================================= */
+
+        .composer {
+            padding: 20px;
+            margin-bottom: 22px;
+        }
+
+        .composer-top {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+        }
+
+        .small-avatar {
+            width: 48px;
+            height: 48px;
+            min-width: 48px;
+
+            border-radius: 50%;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            font-weight: bold;
+            font-size: 19px;
+
+            color: white;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #2563ff,
+                    #9333ea
+                );
+        }
+
+        .composer-input {
+            flex: 1;
+
+            background:
+                rgba(22, 30, 58, 0.85);
+
+            border: 1px solid rgba(110, 125, 255, 0.18);
+
+            border-radius: 30px;
+
+            padding: 15px 20px;
+
+            color: #9ca8c8;
+
+            text-decoration: none;
+
+            font-size: 15px;
+
+            transition: 0.25s;
+        }
+
+        .composer-input:hover {
+            border-color: rgba(130, 100, 255, 0.45);
+
+            background:
+                rgba(28, 37, 70, 0.9);
+        }
+
+        .composer-actions {
+            display: grid;
+
+            grid-template-columns:
+                repeat(3, 1fr);
+
+            margin-top: 18px;
+
+            border-top:
+                1px solid rgba(120,130,255,0.12);
+
             padding-top: 15px;
-            border-top: 1px solid #ddd;
+
+            gap: 10px;
         }
 
-        .comment-box input {
-            width: 70%;
+        .composer-action {
+            text-align: center;
+
+            color: #aeb8d4;
+
+            text-decoration: none;
+
             padding: 10px;
+
+            border-radius: 10px;
+
+            transition: 0.2s;
         }
 
-        .comment-box button {
-            padding: 10px;
+        .composer-action:hover {
+            background: rgba(80,90,180,0.13);
+            color: white;
+        }
+
+
+        /* =========================================
+           POST CARD
+        ========================================= */
+
+        .post-card {
+            padding: 22px;
+            margin-bottom: 22px;
+        }
+
+        .post-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 18px;
+        }
+
+        .post-avatar {
+            width: 50px;
+            height: 50px;
+
+            min-width: 50px;
+
+            border-radius: 50%;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            color: white;
+
+            font-weight: bold;
+            font-size: 20px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #2563ff,
+                    #a855f7,
+                    #ec4899
+                );
+
+            margin-right: 13px;
+        }
+
+        .post-author {
+            text-decoration: none;
+            color: white;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .post-author:hover {
+            color: #7da9ff;
+        }
+
+        .post-time {
+            color: #7985a7;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+
+        .post-content {
+            color: #e7ebfa;
+            font-size: 17px;
+            line-height: 1.7;
+            margin: 18px 0;
+        }
+
+        .post-image {
+            width: 100%;
+            max-height: 600px;
+            object-fit: cover;
+
+            border-radius: 16px;
+
+            margin-top: 8px;
+
+            border:
+                1px solid rgba(130,140,255,0.18);
+        }
+
+
+        /* =========================================
+           POST STATS
+        ========================================= */
+
+        .post-stats {
+            display: flex;
+            justify-content: space-between;
+
+            color: #8994b4;
+
+            font-size: 13px;
+
+            padding: 15px 3px;
+
+            border-bottom:
+                1px solid rgba(120,130,255,0.13);
+        }
+
+
+        /* =========================================
+           POST ACTIONS
+        ========================================= */
+
+        .post-actions {
+            display: grid;
+
+            grid-template-columns:
+                repeat(3, 1fr);
+
+            gap: 8px;
+
+            padding: 10px 0;
+        }
+
+        .action-btn {
+            text-decoration: none;
+
+            text-align: center;
+
+            color: #bdc6df;
+
+            padding: 12px;
+
+            border-radius: 10px;
+
+            font-weight: bold;
+
+            transition: 0.2s;
+        }
+
+        .action-btn:hover {
+            background:
+                rgba(80, 90, 190, 0.15);
+
+            color: white;
+        }
+
+        .like-btn:hover {
+            color: #ff4d73;
+        }
+
+        .share-btn:hover {
+            color: #55c8ff;
+        }
+
+
+        /* =========================================
+           COMMENTS
+        ========================================= */
+
+        .comments-section {
+            border-top:
+                1px solid rgba(120,130,255,0.12);
+
+            padding-top: 16px;
+        }
+
+        .comment-form {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 14px;
+        }
+
+        .comment-form input {
+            flex: 1;
+
+            padding: 13px 16px;
+
+            border-radius: 25px;
+
+            border:
+                1px solid rgba(110,125,255,0.18);
+
+            background:
+                rgba(18, 27, 53, 0.85);
+
+            color: white;
+
+            outline: none;
+        }
+
+        .comment-form input::placeholder {
+            color: #7e89a9;
+        }
+
+        .comment-form button {
+            border: none;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #3568ff,
+                    #7c3aed
+                );
+
+            color: white;
+
+            padding: 0 22px;
+
+            border-radius: 25px;
+
+            cursor: pointer;
+
+            font-weight: bold;
         }
 
         .comment {
-            background: #f5f5f5;
-            padding: 8px;
-            margin-top: 8px;
-            border-radius: 5px;
+            background:
+                rgba(22, 30, 58, 0.70);
+
+            border:
+                1px solid rgba(110,125,255,0.10);
+
+            padding: 11px 14px;
+
+            border-radius: 12px;
+
+            margin-bottom: 8px;
+
+            color: #cdd5eb;
         }
 
-        .logout-button {
-            padding: 8px 12px;
-            background: #333;
+        .comment strong {
             color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
+            margin-right: 5px;
         }
+
+
+        /* =========================================
+           EMPTY
+        ========================================= */
+
+        .empty {
+            text-align: center;
+
+            padding: 70px 20px;
+
+            color: #7f8bab;
+        }
+
+
+        /* =========================================
+           SHARE MESSAGE
+        ========================================= */
+
+        .share-message {
+            position: fixed;
+
+            bottom: 25px;
+            left: 50%;
+
+            transform:
+                translateX(-50%)
+                translateY(100px);
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #2563ff,
+                    #9333ea
+                );
+
+            color: white;
+
+            padding: 14px 24px;
+
+            border-radius: 30px;
+
+            font-weight: bold;
+
+            box-shadow:
+                0 10px 35px rgba(0,0,0,0.4);
+
+            transition: 0.3s;
+
+            z-index: 9999;
+        }
+
+        .share-message.show {
+            transform:
+                translateX(-50%)
+                translateY(0);
+        }
+
+
+        /* =========================================
+           MOBILE
+        ========================================= */
+
+        @media (max-width: 1000px) {
+
+            .search-box {
+                width: 280px;
+            }
+
+            .main-container {
+                grid-template-columns: 240px 1fr;
+            }
+
+            .nav-btn {
+                padding: 10px;
+            }
+
+        }
+
+
+        @media (max-width: 750px) {
+
+            .navbar {
+                padding: 0 12px;
+            }
+
+            .logo {
+                font-size: 20px;
+            }
+
+            .logo-icon {
+                width: 35px;
+                height: 35px;
+            }
+
+            .search-box {
+                display: none;
+            }
+
+            .nav-buttons .nav-btn {
+                font-size: 0;
+            }
+
+            .nav-buttons .nav-btn:first-child {
+                font-size: 18px;
+            }
+
+            .logout-btn {
+                padding: 9px 12px;
+            }
+
+            .main-container {
+                display: block;
+                padding: 0 10px;
+                margin-top: 18px;
+            }
+
+            .sidebar {
+                position: static;
+            }
+
+            .profile-card {
+                display: none;
+            }
+
+            .menu-card {
+                margin-bottom: 18px;
+            }
+
+            .sidebar-menu {
+                display: flex;
+                overflow-x: auto;
+            }
+
+            .sidebar-menu li {
+                flex: 0 0 auto;
+            }
+
+            .sidebar-menu a {
+                padding: 10px 13px;
+            }
+
+            .feed-title {
+                font-size: 24px;
+            }
+
+            .post-card {
+                padding: 16px;
+            }
+
+        }
+
+
+        @media (max-width: 500px) {
+
+            .post-actions {
+                grid-template-columns:
+                    repeat(3, 1fr);
+            }
+
+            .action-btn {
+                font-size: 13px;
+                padding: 10px 5px;
+            }
+
+            .composer-actions {
+                font-size: 13px;
+            }
+
+        }
+
     </style>
+
 </head>
+
 
 <body>
 
-<div class="container">
 
-    <div class="header">
+<!-- =========================================
+     NAVBAR
+========================================= -->
 
-        <h1>🌐 SocialMedia</h1>
+<nav class="navbar">
 
-        {% if user.is_authenticated %}
 
-            <h2>Welcome, {{ user.username }} 👋</h2>
+    <div class="logo">
 
-            <a class="button"
-               href="{% url 'profile' user.username %}">
-                👤 My Profile
-            </a>
+        <div class="logo-icon">
+            ✦
+        </div>
 
-            <a class="button"
-               href="{% url 'create_post' %}">
-                ➕ Create New Post
-            </a>
-
-            <form method="POST"
-                  action="{% url 'logout' %}"
-                  style="display:inline;">
-                {% csrf_token %}
-                <button class="logout-button" type="submit">
-                    Logout
-                </button>
-            </form>
-
-        {% else %}
-
-            <a class="button" href="{% url 'login' %}">
-                Login
-            </a>
-
-            <a class="button" href="{% url 'register' %}">
-                Register
-            </a>
-
-        {% endif %}
+        Social<span>Media</span>
 
     </div>
 
 
-    <h2>📰 Latest Posts</h2>
+    {% if user.is_authenticated %}
+
+        <div class="search-box">
+
+            <form
+                method="GET"
+                action="{% url 'search_users' %}"
+            >
+
+                <input
+                    type="text"
+                    name="q"
+                    placeholder="🔍 Search people, posts, hashtags..."
+                >
+
+            </form>
+
+        </div>
 
 
-    {% for post in posts %}
+        <div class="nav-buttons">
 
-        <div class="post">
 
-            <h3>
-                <a href="{% url 'profile' post.author.username %}">
-                    @{{ post.author.username }}
-                </a>
-            </h3>
+            <a
+                class="nav-btn active"
+                href="{% url 'home' %}"
+            >
+                🏠 Home
+            </a>
 
-            <p>{{ post.content }}</p>
 
-            {% if post.image %}
-                <img src="{{ post.image.url }}" alt="Post image">
-            {% endif %}
+            <!-- IMPORTANT:
+                 Do NOT use /chat/
+                 Your correct URL is messages/
+            -->
+
+            <a
+                class="nav-btn"
+                href="{% url 'messages' %}"
+            >
+                💬 Messages
+            </a>
+
+
+            <a
+                class="nav-btn"
+                href="{% url 'notifications' %}"
+            >
+                🔔 Notifications
+            </a>
+
+
+            <a
+                class="nav-btn profile-nav"
+                href="{% url 'profile' user.username %}"
+            >
+                👤 {{ user.username }}
+            </a>
+
+
+            <form
+                method="POST"
+                action="{% url 'logout' %}"
+            >
+
+                {% csrf_token %}
+
+                <button
+                    class="logout-btn"
+                    type="submit"
+                >
+                    Logout
+                </button>
+
+            </form>
+
+
+        </div>
+
+    {% endif %}
+
+</nav>
+
+
+
+<!-- =========================================
+     MAIN
+========================================= -->
+
+<div class="main-container">
+
+
+    <!-- =====================================
+         LEFT SIDEBAR
+    ===================================== -->
+
+    <aside class="sidebar">
+
+
+        <!-- PROFILE -->
+
+        <div class="glass-card profile-card">
+
+
+            <div class="profile-avatar">
+
+                {{ user.username|first|upper }}
+
+            </div>
+
+
+            <h2>
+                @{{ user.username }}
+            </h2>
+
 
             <p>
-                🕒 Posted: {{ post.created_at }}
+                Welcome back! 👋
             </p>
+
+
+            <a
+                href="{% url 'create_post' %}"
+                class="create-btn"
+            >
+                ＋ Create Post
+            </a>
+
+
+        </div>
+
+
+
+        <!-- MENU -->
+
+        <div class="glass-card menu-card">
+
+            <ul class="sidebar-menu">
+
+
+                <li>
+
+                    <a
+                        class="active"
+                        href="{% url 'home' %}"
+                    >
+                        🏠 Home
+                    </a>
+
+                </li>
+
+
+                <li>
+
+                    <a
+                        href="{% url 'profile' user.username %}"
+                    >
+                        👤 My Profile
+                    </a>
+
+                </li>
+
+
+                <li>
+
+                    <a
+                        href="{% url 'messages' %}"
+                    >
+                        💬 Messages
+                    </a>
+
+                </li>
+
+
+                <li>
+
+                    <a
+                        href="{% url 'notifications' %}"
+                    >
+                        🔔 Notifications
+                    </a>
+
+                </li>
+
+
+                <li>
+
+                    <a
+                        href="{% url 'search_users' %}"
+                    >
+                        🔍 Find People
+                    </a>
+
+                </li>
+
+
+            </ul>
+
+        </div>
+
+
+    </aside>
+
+
+
+    <!-- =====================================
+         CENTER FEED
+    ===================================== -->
+
+    <main>
+
+
+        <h1 class="feed-title">
+            Latest Posts
+        </h1>
+
+
+
+        <!-- =================================
+             POST COMPOSER
+        ================================= -->
+
+        <div class="glass-card composer">
+
+
+            <div class="composer-top">
+
+
+                <div class="small-avatar">
+                    {{ user.username|first|upper }}
+                </div>
+
+
+                <a
+                    href="{% url 'create_post' %}"
+                    class="composer-input"
+                >
+                    What's on your mind, {{ user.username }}?
+                </a>
+
+
+            </div>
+
+
+            <div class="composer-actions">
+
+
+                <a
+                    href="{% url 'create_post' %}"
+                    class="composer-action"
+                >
+                    🖼️ Photo / Video
+                </a>
+
+
+                <a
+                    href="{% url 'create_post' %}"
+                    class="composer-action"
+                >
+                    😊 Feeling
+                </a>
+
+
+                <a
+                    href="{% url 'create_post' %}"
+                    class="composer-action"
+                >
+                    #️⃣ Hashtag
+                </a>
+
+
+            </div>
+
+
+        </div>
+
+
+
+        <!-- =================================
+             POSTS
+        ================================= -->
+
+        {% for post in posts %}
+
+
+        <article
+            class="glass-card post-card"
+            id="post-{{ post.id }}"
+        >
+
+
+            <!-- POST HEADER -->
+
+            <div class="post-header">
+
+
+                <div class="post-avatar">
+
+                    {{ post.author.username|first|upper }}
+
+                </div>
+
+
+                <div>
+
+                    <a
+                        class="post-author"
+                        href="{% url 'profile' post.author.username %}"
+                    >
+                        @{{ post.author.username }}
+                    </a>
+
+
+                    <div class="post-time">
+
+                        ◷
+                        {{ post.created_at|date:"M d, Y · h:i A" }}
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+
+
+            <!-- POST CONTENT -->
+
+            {% if post.content %}
+
+                <div class="post-content">
+
+                    {{ post.content }}
+
+                </div>
+
+            {% endif %}
+
+
+
+            <!-- POST IMAGE -->
+
+            {% if post.image %}
+
+                <img
+                    class="post-image"
+                    src="{{ post.image.url }}"
+                    alt="Post image"
+                >
+
+            {% endif %}
+
+
+
+            <!-- STATS -->
+
+            <div class="post-stats">
+
+
+                <span>
+
+                    ❤️ {{ post.likes.count }} Likes
+
+                </span>
+
+
+                <span>
+
+                    💬 {{ post.comments.count }} Comments
+
+                </span>
+
+
+            </div>
+
+
+
+            <!-- ACTION BUTTONS -->
 
             {% if user.is_authenticated %}
 
-                <a class="button like-button"
-                   href="{% url 'like_post' post.id %}">
-                    ❤️ Like / Unlike
+
+            <div class="post-actions">
+
+
+                <!-- LIKE -->
+
+                <a
+                    class="action-btn like-btn"
+                    href="{% url 'like_post' post.id %}"
+                >
+                    ❤️ Like
                 </a>
+
+
+                <!-- COMMENT -->
+
+                <a
+                    class="action-btn"
+                    href="#comments-{{ post.id }}"
+                >
+                    💬 Comment
+                </a>
+
+
+                <!-- SHARE -->
+
+                <a
+                    class="action-btn share-btn"
+                    href="javascript:void(0);"
+                    onclick="sharePost(
+                        '{{ post.id }}',
+                        '{{ post.author.username|escapejs }}'
+                    )"
+                >
+                    🚀 Share
+                </a>
+
+
+            </div>
+
 
             {% endif %}
 
-            <p>
-                ❤️ Likes: {{ post.likes.count }}
-            </p>
 
 
             <!-- COMMENTS -->
 
-            <div class="comment-box">
+            <div
+                class="comments-section"
+                id="comments-{{ post.id }}"
+            >
 
-                <h3>💬 Comments</h3>
 
                 {% if user.is_authenticated %}
 
-                    <form method="POST"
-                          action="{% url 'add_comment' post.id %}">
 
-                        {% csrf_token %}
+                <form
+                    method="POST"
+                    action="{% url 'add_comment' post.id %}"
+                    class="comment-form"
+                >
 
-                        <input
-                            type="text"
-                            name="content"
-                            placeholder="Write a comment..."
-                            required
-                        >
+                    {% csrf_token %}
 
-                        <button type="submit">
-                            💬 Comment
-                        </button>
 
-                    </form>
+                    <input
+                        type="text"
+                        name="content"
+                        placeholder="Write a comment..."
+                        autocomplete="off"
+                        required
+                    >
+
+
+                    <button type="submit">
+                        Post
+                    </button>
+
+
+                </form>
+
 
                 {% endif %}
 
 
+
                 {% for comment in post.comments.all %}
 
+
                     <div class="comment">
+
 
                         <strong>
                             @{{ comment.author.username }}
                         </strong>
 
+
                         {{ comment.content }}
+
 
                     </div>
 
+
                 {% empty %}
 
-                    <p>No comments yet.</p>
+
+                    <p
+                        style="
+                        color:#697594;
+                        font-size:13px;
+                        "
+                    >
+                        No comments yet.
+                    </p>
+
 
                 {% endfor %}
 
+
             </div>
 
-        </div>
 
-    {% empty %}
+        </article>
 
-        <div class="post">
-            <p>
-                No posts yet. Be the first to create a post!
-            </p>
-        </div>
 
-    {% endfor %}
+        {% empty %}
+
+
+            <div class="glass-card empty">
+
+                <h2>
+                    📭 No Posts Yet
+                </h2>
+
+                <br>
+
+                <p>
+                    Start your social journey by creating your first post.
+                </p>
+
+                <br>
+
+                <a
+                    href="{% url 'create_post' %}"
+                    class="create-btn"
+                    style="max-width:220px;margin:auto;"
+                >
+                    ＋ Create Post
+                </a>
+
+            </div>
+
+
+        {% endfor %}
+
+
+    </main>
+
 
 </div>
 
+
+
+<!-- =========================================
+     SHARE NOTIFICATION
+========================================= -->
+
+<div
+    id="shareMessage"
+    class="share-message"
+>
+    🔗 Post link copied!
+</div>
+
+
+
+<script>
+
+
+/* =========================================
+   SHARE POST
+========================================= */
+
+function sharePost(postId, username) {
+
+    const url =
+        window.location.origin +
+        window.location.pathname +
+        "#post-" +
+        postId;
+
+
+    const shareText =
+        "Check out @" +
+        username +
+        "'s post on SocialMedia";
+
+
+    /* Modern browser sharing */
+
+    if (
+        navigator.share
+    ) {
+
+        navigator.share({
+
+            title: "SocialMedia",
+
+            text: shareText,
+
+            url: url
+
+        }).catch(
+            function(error) {
+
+                console.log(
+                    "Share cancelled:",
+                    error
+                );
+
+            }
+        );
+
+        return;
+
+    }
+
+
+    /* Copy link fallback */
+
+    if (
+        navigator.clipboard
+    ) {
+
+        navigator.clipboard
+            .writeText(url)
+            .then(
+                function() {
+
+                    showShareMessage();
+
+                }
+            )
+            .catch(
+                function() {
+
+                    fallbackCopy(url);
+
+                }
+            );
+
+    } else {
+
+        fallbackCopy(url);
+
+    }
+
+}
+
+
+/* =========================================
+   FALLBACK COPY
+========================================= */
+
+function fallbackCopy(text) {
+
+    const textarea =
+        document.createElement("textarea");
+
+    textarea.value = text;
+
+    document.body.appendChild(
+        textarea
+    );
+
+    textarea.select();
+
+    document.execCommand(
+        "copy"
+    );
+
+    textarea.remove();
+
+    showShareMessage();
+
+}
+
+
+/* =========================================
+   SHARE SUCCESS MESSAGE
+========================================= */
+
+function showShareMessage() {
+
+    const message =
+        document.getElementById(
+            "shareMessage"
+        );
+
+    message.classList.add(
+        "show"
+    );
+
+
+    setTimeout(
+        function() {
+
+            message.classList.remove(
+                "show"
+            );
+
+        },
+        2200
+    );
+
+}
+
+</script>
+
+
 </body>
+
 </html>

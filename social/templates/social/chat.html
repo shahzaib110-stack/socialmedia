@@ -1,0 +1,811 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Chat with @{{ other_user.username }}</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f0f2f5;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* =========================
+           MAIN CHAT APP
+        ========================= */
+
+        .messenger {
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            background: white;
+        }
+
+        /* =========================
+           LEFT SIDEBAR
+        ========================= */
+
+        .sidebar {
+            width: 330px;
+            border-right: 1px solid #ddd;
+            background: white;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .sidebar-header h1 {
+            font-size: 26px;
+            color: #1877f2;
+            margin-bottom: 15px;
+        }
+
+        .search {
+            width: 100%;
+            padding: 12px 16px;
+            border: none;
+            outline: none;
+            background: #f0f2f5;
+            border-radius: 25px;
+            font-size: 14px;
+        }
+
+        .conversation-list {
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .user-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 13px 16px;
+            text-decoration: none;
+            color: #111;
+            transition: background 0.2s;
+        }
+
+        .user-item:hover {
+            background: #f0f2f5;
+        }
+
+        .user-item.active {
+            background: #e7f0ff;
+        }
+
+        /* =========================
+           AVATAR
+        ========================= */
+
+        .avatar {
+            width: 52px;
+            height: 52px;
+            min-width: 52px;
+            border-radius: 50%;
+            background: #1877f2;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            font-weight: bold;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .online-dot {
+            position: absolute;
+            right: 1px;
+            bottom: 1px;
+            width: 13px;
+            height: 13px;
+            border-radius: 50%;
+            background: #31a24c;
+            border: 2px solid white;
+        }
+
+        .user-details {
+            overflow: hidden;
+        }
+
+        .user-name {
+            font-weight: bold;
+            font-size: 15px;
+            margin-bottom: 4px;
+        }
+
+        .user-status {
+            color: #777;
+            font-size: 13px;
+        }
+
+        /* =========================
+           CHAT AREA
+        ========================= */
+
+        .chat-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+        }
+
+        /* =========================
+           CHAT HEADER
+        ========================= */
+
+        .chat-header {
+            height: 75px;
+            padding: 10px 22px;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid #ddd;
+            background: white;
+        }
+
+        .back-button {
+            display: none;
+            text-decoration: none;
+            font-size: 25px;
+            color: #1877f2;
+            margin-right: 12px;
+        }
+
+        .header-avatar {
+            width: 48px;
+            height: 48px;
+            min-width: 48px;
+            border-radius: 50%;
+            background: #1877f2;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .header-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .header-info {
+            margin-left: 12px;
+        }
+
+        .header-info h2 {
+            font-size: 17px;
+            margin-bottom: 4px;
+        }
+
+        .header-info p {
+            font-size: 12px;
+            color: #31a24c;
+        }
+
+        /* =========================
+           MESSAGES
+        ========================= */
+
+        .messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 25px;
+            background: #f8f9fa;
+            scroll-behavior: smooth;
+        }
+
+        .welcome {
+            text-align: center;
+            margin: 80px auto;
+            color: #777;
+        }
+
+        .welcome-icon {
+            width: 80px;
+            height: 80px;
+            margin: auto auto 15px;
+            border-radius: 50%;
+            background: #1877f2;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 35px;
+        }
+
+        .welcome h2 {
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        /* =========================
+           MESSAGE ROW
+        ========================= */
+
+        .message-row {
+            display: flex;
+            margin-bottom: 8px;
+        }
+
+        .message-row.sent {
+            justify-content: flex-end;
+        }
+
+        .message-row.received {
+            justify-content: flex-start;
+        }
+
+        .message {
+            max-width: 65%;
+            padding: 10px 15px;
+            border-radius: 20px;
+            word-wrap: break-word;
+        }
+
+        .sent .message {
+            background: #1877f2;
+            color: white;
+            border-bottom-right-radius: 5px;
+        }
+
+        .received .message {
+            background: #e4e6eb;
+            color: #111;
+            border-bottom-left-radius: 5px;
+        }
+
+        .message-text {
+            font-size: 15px;
+            line-height: 1.45;
+        }
+
+        .message-time {
+            font-size: 10px;
+            margin-top: 5px;
+            opacity: 0.7;
+            display: block;
+        }
+
+        /* =========================
+           MESSAGE INPUT
+        ========================= */
+
+        .message-form {
+            min-height: 72px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 20px;
+            border-top: 1px solid #ddd;
+            background: white;
+        }
+
+        .message-input {
+            flex: 1;
+            border: none;
+            outline: none;
+            background: #f0f2f5;
+            border-radius: 25px;
+            padding: 13px 18px;
+            font-size: 15px;
+        }
+
+        .message-input:focus {
+            background: #e9ebee;
+        }
+
+        .emoji-button {
+            width: 42px;
+            height: 42px;
+            border: none;
+            background: transparent;
+            font-size: 21px;
+            cursor: pointer;
+            border-radius: 50%;
+        }
+
+        .emoji-button:hover {
+            background: #f0f2f5;
+        }
+
+        .send-button {
+            width: 45px;
+            height: 45px;
+            border: none;
+            border-radius: 50%;
+            background: #1877f2;
+            color: white;
+            cursor: pointer;
+            font-size: 18px;
+            transition: 0.2s;
+        }
+
+        .send-button:hover {
+            background: #0d65d9;
+            transform: scale(1.05);
+        }
+
+        /* =========================
+           SCROLLBAR
+        ========================= */
+
+        ::-webkit-scrollbar {
+            width: 7px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #c7c7c7;
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        /* =========================
+           MOBILE
+        ========================= */
+
+        @media (max-width: 800px) {
+
+            .sidebar {
+                width: 90px;
+            }
+
+            .sidebar-header h1 {
+                font-size: 20px;
+                text-align: center;
+            }
+
+            .search {
+                display: none;
+            }
+
+            .user-details {
+                display: none;
+            }
+
+            .user-item {
+                justify-content: center;
+                padding: 12px;
+            }
+
+            .avatar {
+                width: 48px;
+                height: 48px;
+                min-width: 48px;
+            }
+
+            .message {
+                max-width: 80%;
+            }
+        }
+
+        @media (max-width: 600px) {
+
+            .sidebar {
+                display: none;
+            }
+
+            .back-button {
+                display: block;
+            }
+
+            .chat-header {
+                padding: 10px 15px;
+            }
+
+            .messages {
+                padding: 15px 12px;
+            }
+
+            .message-form {
+                padding: 10px;
+            }
+
+            .message {
+                max-width: 85%;
+            }
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="messenger">
+
+    <!-- =========================
+         LEFT SIDEBAR
+    ========================= -->
+
+    <aside class="sidebar">
+
+        <div class="sidebar-header">
+
+            <h1>
+                💬 Chats
+            </h1>
+
+            <input
+                type="text"
+                class="search"
+                id="userSearch"
+                placeholder="🔍 Search people..."
+            >
+
+        </div>
+
+
+        <div class="conversation-list">
+
+            {% for user in users %}
+
+                <a
+                    href="{% url 'chat' username=user.username %}"
+                    class="user-item {% if user.username == other_user.username %}active{% endif %}"
+                >
+
+                    <div class="avatar">
+
+                        {% if user.profile.profile_picture %}
+
+                            <img
+                                src="{{ user.profile.profile_picture.url }}"
+                                alt="{{ user.username }}"
+                            >
+
+                        {% else %}
+
+                            {{ user.username|first|upper }}
+
+                        {% endif %}
+
+                        <span class="online-dot"></span>
+
+                    </div>
+
+
+                    <div class="user-details">
+
+                        <div class="user-name">
+                            @{{ user.username }}
+                        </div>
+
+                        <div class="user-status">
+                            Available to chat
+                        </div>
+
+                    </div>
+
+                </a>
+
+            {% empty %}
+
+                <div style="padding:25px; text-align:center; color:#777;">
+                    No other users yet.
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    </aside>
+
+
+    <!-- =========================
+         CHAT AREA
+    ========================= -->
+
+    <main class="chat-area">
+
+
+        <!-- CHAT HEADER -->
+
+        <header class="chat-header">
+
+            <a
+                href="{% url 'messages' %}"
+                class="back-button"
+            >
+                ←
+            </a>
+
+
+            <div class="header-avatar">
+
+                {% if other_user.profile.profile_picture %}
+
+                    <img
+                        src="{{ other_user.profile.profile_picture.url }}"
+                        alt="{{ other_user.username }}"
+                    >
+
+                {% else %}
+
+                    {{ other_user.username|first|upper }}
+
+                {% endif %}
+
+            </div>
+
+
+            <div class="header-info">
+
+                <h2>
+                    @{{ other_user.username }}
+                </h2>
+
+                <p>
+                    ● Active on SocialMedia
+                </p>
+
+            </div>
+
+        </header>
+
+
+        <!-- =========================
+             CHAT MESSAGES
+        ========================= -->
+
+        <div
+            class="messages"
+            id="messages"
+        >
+
+            {% for message in chat_messages %}
+
+                {% if message.sender == request.user %}
+
+                    <div class="message-row sent">
+
+                        <div class="message">
+
+                            <p class="message-text">
+                                {{ message.content }}
+                            </p>
+
+                            <span class="message-time">
+                                {{ message.created_at|date:"h:i A" }}
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                {% else %}
+
+                    <div class="message-row received">
+
+                        <div class="message">
+
+                            <p class="message-text">
+                                {{ message.content }}
+                            </p>
+
+                            <span class="message-time">
+                                {{ message.created_at|date:"h:i A" }}
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                {% endif %}
+
+            {% empty %}
+
+                <div class="welcome">
+
+                    <div class="welcome-icon">
+                        💬
+                    </div>
+
+                    <h2>
+                        Start a conversation
+                    </h2>
+
+                    <p>
+                        Send a message to
+                        <strong>
+                            @{{ other_user.username }}
+                        </strong>
+                    </p>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+
+        <!-- =========================
+             MESSAGE FORM
+        ========================= -->
+
+        <form
+            method="POST"
+            action="{% url 'chat' username=other_user.username %}"
+            class="message-form"
+        >
+
+            {% csrf_token %}
+
+            <button
+                type="button"
+                class="emoji-button"
+                onclick="addEmoji()"
+            >
+                😊
+            </button>
+
+
+            <input
+                type="text"
+                name="content"
+                id="messageInput"
+                class="message-input"
+                placeholder="Type a message..."
+                autocomplete="off"
+                required
+            >
+
+
+            <button
+                type="submit"
+                class="send-button"
+                title="Send message"
+            >
+                ➤
+            </button>
+
+        </form>
+
+    </main>
+
+</div>
+
+
+<script>
+
+    /* =========================
+       AUTO SCROLL
+    ========================= */
+
+    const messages = document.getElementById("messages");
+
+    if (messages) {
+        messages.scrollTop = messages.scrollHeight;
+    }
+
+
+    /* =========================
+       ENTER TO SEND
+    ========================= */
+
+    const input = document.getElementById("messageInput");
+
+    if (input) {
+
+        input.addEventListener(
+            "keydown",
+            function(event) {
+
+                if (
+                    event.key === "Enter" &&
+                    !event.shiftKey
+                ) {
+
+                    event.preventDefault();
+
+                    this.form.submit();
+
+                }
+
+            }
+        );
+
+    }
+
+
+    /* =========================
+       EMOJI
+    ========================= */
+
+    function addEmoji() {
+
+        const input =
+            document.getElementById("messageInput");
+
+        if (input) {
+
+            input.value += " 😊";
+
+            input.focus();
+
+        }
+
+    }
+
+
+    /* =========================
+       SEARCH USERS
+    ========================= */
+
+    const search =
+        document.getElementById("userSearch");
+
+    if (search) {
+
+        search.addEventListener(
+            "input",
+            function() {
+
+                const query =
+                    this.value.toLowerCase();
+
+                const users =
+                    document.querySelectorAll(".user-item");
+
+                users.forEach(
+                    function(user) {
+
+                        const username =
+                            user.innerText.toLowerCase();
+
+                        if (
+                            username.includes(query)
+                        ) {
+
+                            user.style.display = "flex";
+
+                        } else {
+
+                            user.style.display = "none";
+
+                        }
+
+                    }
+                );
+
+            }
+        );
+
+    }
+
+</script>
+
+</body>
+
+</html>

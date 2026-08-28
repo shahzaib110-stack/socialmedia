@@ -2,9 +2,9 @@ from django.db import models
 from django.contrib.auth.models import User
 
 
-# =========================
+# ============================================================
 # PROFILE
-# =========================
+# ============================================================
 
 class Profile(models.Model):
 
@@ -14,7 +14,7 @@ class Profile(models.Model):
     )
 
     profile_picture = models.ImageField(
-        upload_to='profile_pictures/',
+        upload_to="profile_pictures/",
         blank=True,
         null=True
     )
@@ -27,22 +27,24 @@ class Profile(models.Model):
         return self.user.username
 
 
-# =========================
+# ============================================================
 # POST
-# =========================
+# ============================================================
 
 class Post(models.Model):
 
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='posts'
+        related_name="posts"
     )
 
-    content = models.TextField()
+    content = models.TextField(
+        blank=True
+    )
 
     image = models.ImageField(
-        upload_to='posts/',
+        upload_to="posts/",
         blank=True,
         null=True
     )
@@ -55,16 +57,16 @@ class Post(models.Model):
         return f"{self.author.username} - {self.created_at}"
 
 
-# =========================
+# ============================================================
 # COMMENT
-# =========================
+# ============================================================
 
 class Comment(models.Model):
 
     post = models.ForeignKey(
         Post,
         on_delete=models.CASCADE,
-        related_name='comments'
+        related_name="comments"
     )
 
     author = models.ForeignKey(
@@ -82,21 +84,22 @@ class Comment(models.Model):
         return f"{self.author.username}: {self.content[:30]}"
 
 
-# =========================
+# ============================================================
 # LIKE
-# =========================
+# ============================================================
 
 class Like(models.Model):
 
     post = models.ForeignKey(
         Post,
         on_delete=models.CASCADE,
-        related_name='likes'
+        related_name="likes"
     )
 
     user = models.ForeignKey(
         User,
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        related_name="likes"
     )
 
     created_at = models.DateTimeField(
@@ -104,32 +107,31 @@ class Like(models.Model):
     )
 
     class Meta:
-
         unique_together = (
-            'post',
-            'user'
+            "post",
+            "user"
         )
 
     def __str__(self):
         return f"{self.user.username} likes Post {self.post.id}"
 
 
-# =========================
+# ============================================================
 # FOLLOW
-# =========================
+# ============================================================
 
 class Follow(models.Model):
 
     follower = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='following'
+        related_name="following"
     )
 
     following = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='followers'
+        related_name="followers"
     )
 
     created_at = models.DateTimeField(
@@ -137,10 +139,9 @@ class Follow(models.Model):
     )
 
     class Meta:
-
         unique_together = (
-            'follower',
-            'following'
+            "follower",
+            "following"
         )
 
     def __str__(self):
@@ -151,28 +152,29 @@ class Follow(models.Model):
         )
 
 
-# =========================
+# ============================================================
 # NOTIFICATION
-# =========================
+# ============================================================
 
 class Notification(models.Model):
 
     NOTIFICATION_TYPES = (
-        ('follow', 'Follow'),
-        ('like', 'Like'),
-        ('comment', 'Comment'),
+        ("follow", "Follow"),
+        ("like", "Like"),
+        ("comment", "Comment"),
+        ("message", "Message"),
     )
 
     recipient = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='notifications'
+        related_name="notifications"
     )
 
     sender = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='sent_notifications'
+        related_name="sent_notifications"
     )
 
     notification_type = models.CharField(
@@ -185,7 +187,7 @@ class Notification(models.Model):
         on_delete=models.CASCADE,
         null=True,
         blank=True,
-        related_name='notifications'
+        related_name="notifications"
     )
 
     is_read = models.BooleanField(
@@ -197,9 +199,55 @@ class Notification(models.Model):
     )
 
     def __str__(self):
-
         return (
             f"{self.sender.username} "
             f"→ {self.recipient.username} "
             f"({self.notification_type})"
+        )
+
+
+# ============================================================
+# PRIVATE MESSAGES
+# ============================================================
+
+class Message(models.Model):
+
+    sender = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="sent_messages"
+    )
+
+    receiver = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="received_messages"
+    )
+
+    # Normal text message
+    content = models.TextField(
+        blank=True
+    )
+
+    # Optional shared post
+    post = models.ForeignKey(
+        Post,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="shared_messages"
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    is_read = models.BooleanField(
+        default=False
+    )
+
+    def __str__(self):
+        return (
+            f"{self.sender.username} "
+            f"→ {self.receiver.username}"
         )
